@@ -1,32 +1,53 @@
 import numpy as np
 
-class NumericalSimulation:
-    def __init__(self, state0, spatial_axis, time_axis, u):
+class NumericalScheme:
+    def __init__(self, state0, spatial_axis, time_axis, u, scheme="Upwind"):
         self.state = state0
         self.spatial_axis = spatial_axis
         self.time_axis = time_axis
         self.u = u
         self.mesh = np.meshgrid(spatial_axis, time_axis)
         self.solution = np.zeros([len(spatial_axis), len(time_axis)])
+        self.scheme = scheme
 
-    def Tick(self):
+    def TickUpwind(self):
         state_plus = np.zeros(self.state.shape)
         for n, state_n in enumerate(self.state):
             region_of_interest = self.Wrapp(n)
-            print(region_of_interest)
-            print(self.state)
+            # print(region_of_interest)
+            # print(self.state)
             [dt, dx] = self.StepSize(n)
-            state_plus[n] = self.TickUpwind(region_of_interest, dt, dx)
+            state_plus[n] = self.Upwind(region_of_interest, dt, dx)
         self.state = state_plus
 
-    def TickUpwind(self, region_of_interest, dt, dx):
+    def TickFromm(self):
+        state_plus = np.zeros(self.state.shape)
+        for n, state_n in enumerate(self.state):
+            region_of_interest = self.Wrapp(n, scope=2)
+            # print(region_of_interest)
+            # print(self.state)
+            [dt, dx] = self.StepSize(n)
+            state_plus[n] = self.Fromm(region_of_interest, dt, dx)
+        self.state = state_plus
+
+    def Upwind(self, region_of_interest, dt, dx):
         if self.u < 0:
             region_of_interest = np.flip(region_of_interest)
         q_plus = region_of_interest[1] - self.u*dt*(region_of_interest[1]-region_of_interest[0])/dx
         return q_plus
 
-    def TickFromm(self):
-        return 0
+    def Fromm(self, region_of_interest, dt, dx):
+        if self.u < 0:
+            region_of_interest = np.flip(region_of_interest)
+
+        Qi_min2 = region_of_interest[0]
+        Qi_min1 = region_of_interest[1]
+        Qi = region_of_interest[2]
+        Qi_plus1 = region_of_interest[3]
+        q_plus = Qi - (0.25*self.u*dt/dx)*(Qi_plus1 + 3*Qi - 5*Qi_min1 + Qi_min2) - \
+                 (0.25*(self.u*dt/dx)**2)*(Qi_plus1 - Qi - Qi_min1 + Qi_min2)
+
+        return q_plus
 
     def TickVanLeer(self):
         return 0
