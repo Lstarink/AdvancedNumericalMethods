@@ -44,7 +44,7 @@ class NumericalScheme:
         Qi_min1 = region_of_interest[1]
         Qi = region_of_interest[2]
         Qi_plus1 = region_of_interest[3]
-        q_plus = Qi - (0.25*self.u*dt/dx)*(Qi_plus1 + 3*Qi - 5*Qi_min1 + Qi_min2) - \
+        q_plus = Qi - (0.25*self.u*dt/dx)*(Qi_plus1 + 3*Qi - 5*Qi_min1 + Qi_min2) + \
                  (0.25*(self.u*dt/dx)**2)*(Qi_plus1 - Qi - Qi_min1 + Qi_min2)
 
         return q_plus
