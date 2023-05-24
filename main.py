@@ -48,23 +48,31 @@ def ExerciseTwo():
     rho0 = 1
 
 
-    x_axis = np.linspace(0, 10, 100)
+    x_axis = np.linspace(0, 10, 50)
     t_axis = np.linspace(0, 10, 500)
 
     A = np.array([[0, K0], [1/rho0, 0]])
     [u, p] = SampleInitialStateTwo(x_axis)
 
     twoD_scheme = composeAndDecompose.ComposeDecompose(A, np.array([u, p]), x_axis, t_axis)
+    print(twoD_scheme.speeds)
 
-    for i in range(10):
-        fig, (ax1, ax2) = plt.subplots(1, 2)
-        for state in twoD_scheme.x:
-            ax1.plot(x_axis, state)
-        for decomposed_state in twoD_scheme.w:
-            ax2.plot(x_axis, decomposed_state)
-        plt.show()
+    for i in range(30):
+        # fig, (ax1, ax2) = plt.subplots(1, 2)
+        # for state in twoD_scheme.x:
+        #     ax1.plot(x_axis, state)
+        # for decomposed_state in twoD_scheme.w:
+        #     ax2.plot(x_axis, decomposed_state)
+        # # plt.show()
         twoD_scheme.March()
 
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    for state in twoD_scheme.x:
+        ax1.plot(x_axis, state)
+    for decomposed_state in twoD_scheme.w:
+        ax2.plot(x_axis, decomposed_state)
+    plt.show()
+    # twoD_scheme.March()
     return 0
 
 ExerciseTwo()

@@ -7,7 +7,6 @@ class NumericalScheme:
         self.time_axis = time_axis
         self.u = u
         self.mesh = np.meshgrid(spatial_axis, time_axis)
-        self.solution = np.zeros([len(spatial_axis), len(time_axis)])
         self.scheme = scheme
 
     def TickUpwind(self):

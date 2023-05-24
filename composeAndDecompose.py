@@ -56,7 +56,7 @@ class ComposeDecompose:
 
     def March(self):
         for n, scheme in enumerate(self.schemes):
-            scheme.TickFromm()
+            scheme.TickUpwind()
             self.w[n] = scheme.state
         self.x = self.Compose()
 
