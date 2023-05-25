@@ -1,7 +1,9 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class NumericalScheme:
     def __init__(self, state0, spatial_axis, time_axis, u, scheme="Upwind"):
+        self.state0 = state0
         self.state = state0
         self.spatial_axis = spatial_axis
         self.time_axis = time_axis
@@ -32,7 +34,7 @@ class NumericalScheme:
     def Upwind(self, region_of_interest, dt, dx):
         if self.u < 0:
             region_of_interest = np.flip(region_of_interest)
-        q_plus = region_of_interest[1] - self.u*dt*(region_of_interest[1]-region_of_interest[0])/dx
+        q_plus = region_of_interest[1] - abs(self.u)*dt*(region_of_interest[1]-region_of_interest[0])/dx
         return q_plus
 
     def Fromm(self, region_of_interest, dt, dx):
@@ -43,8 +45,8 @@ class NumericalScheme:
         Qi_min1 = region_of_interest[1]
         Qi = region_of_interest[2]
         Qi_plus1 = region_of_interest[3]
-        q_plus = Qi - (0.25*self.u*dt/dx)*(Qi_plus1 + 3*Qi - 5*Qi_min1 + Qi_min2) + \
-                 (0.25*(self.u*dt/dx)**2)*(Qi_plus1 - Qi - Qi_min1 + Qi_min2)
+        q_plus = Qi - (0.25*abs(self.u)*dt/dx)*(Qi_plus1 + 3*Qi - 5*Qi_min1 + Qi_min2) + \
+                 (0.25*(abs(self.u)*dt/dx)**2)*(Qi_plus1 - Qi - Qi_min1 + Qi_min2)
 
         return q_plus
 
@@ -71,3 +73,9 @@ class NumericalScheme:
             dx = self.spatial_axis[n+1] - self.spatial_axis[n] # Not sure
         dt = self.time_axis[1]-self.time_axis[0]
         return [dt, dx]
+
+    def PlotX(self):
+        plt.figure()
+        plt.step(self.spatial_axis, self.state0)
+        plt.step(self.spatial_axis, self.state)
+        plt.show()

@@ -12,6 +12,7 @@ class ComposeDecompose:
         self.R, self.R_inv, self.Phi, self.speeds = ComposeDecompose.Diagonalize(self)
         self.w = ComposeDecompose.Decompose(self)
         self.schemes = ComposeDecompose.SetupSchemes(self)
+        print("schemes: ", self.schemes)
 
 
     def Diagonalize(self):
@@ -56,7 +57,8 @@ class ComposeDecompose:
 
     def March(self):
         for n, scheme in enumerate(self.schemes):
-            scheme.TickUpwind()
+            scheme.TickFromm()
+            # scheme.PlotX()
             self.w[n] = scheme.state
         self.x = self.Compose()
 
