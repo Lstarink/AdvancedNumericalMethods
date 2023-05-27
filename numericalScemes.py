@@ -51,7 +51,35 @@ class NumericalScheme:
         return q_plus
 
     def TickVanLeer(self):
+        state_plus = np.zeros(self.state.shape)
+        for n, state_n in enumerate(self.state):
+            region_of_interest = self.Wrapp(n, scope=2)
+            # print(region_of_interest)
+            # print(self.state)
+            [dt, dx] = self.StepSize(n)
+            state_plus[n] = self.VanLeer(region_of_interest, dt, dx)
+        self.state = state_plus
         return 0
+
+    def VanLeer(self, region_of_interest, dt, dx):
+        nu = self.u*dt/dx
+        if self.u <0:
+            region_of_interest = np.flip(region_of_interest)
+
+        Qi_min2 = region_of_interest[0]
+        Qi_min1 = region_of_interest[1]
+        Qi = region_of_interest[2]
+        Qi_plus1 = region_of_interest[3]
+        Qi_plus2 = region_of_interest[4]
+
+        theta_i_min_half = (Qi-Qi_min1)/(Qi_min1-Qi_min2)
+        theta_i_plus_half = (Qi-Qi_plus1)/(Qi_plus1-Qi_plus2)
+
+        phi_i_min_half = (theta_i_min_half + abs(theta_i_min_half))/(1 + abs(theta_i_min_half))
+        phi_i_plus_half = (theta_i_plus_half + abs(theta_i_plus_half))/(1 + abs(theta_i_plus_half))
+
+        Q_plus = Qi - nu*(Qi - Qi_min1) - 0.5*nu*(1-nu)*(phi_i_plus_half*(Qi_plus1-Qi) - phi_i_min_half*(Qi-Qi_min1))
+        return Q_plus
 
     def Wrapp(self, n, scope=1):
         state = self.state

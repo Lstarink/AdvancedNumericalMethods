@@ -61,7 +61,7 @@ def ExerciseTwo():
     for decomposed_state in twoD_scheme.w:
         plt.plot(x_axis, decomposed_state)
     plt.show()
-    for i in range(30):
+    for i in range(1):
         # fig, (ax1, ax2) = plt.subplots(1, 2)
         # for state in twoD_scheme.x:
         #     ax1.plot(x_axis, state)
