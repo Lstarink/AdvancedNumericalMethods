@@ -62,7 +62,7 @@ class NumericalScheme:
         return 0
 
     def VanLeer(self, region_of_interest, dt, dx):
-        nu = self.u*dt/dx
+        nu = abs(self.u)*dt/dx
         if self.u <0:
             region_of_interest = np.flip(region_of_interest)
 
@@ -70,13 +70,22 @@ class NumericalScheme:
         Qi_min1 = region_of_interest[1]
         Qi = region_of_interest[2]
         Qi_plus1 = region_of_interest[3]
-        Qi_plus2 = region_of_interest[4]
 
-        theta_i_min_half = (Qi-Qi_min1)/(Qi_min1-Qi_min2)
-        theta_i_plus_half = (Qi-Qi_plus1)/(Qi_plus1-Qi_plus2)
+        if (Qi-Qi_min1) != 0:
+            theta_i_min_half = (Qi_min1-Qi_min2)/(Qi-Qi_min1)
+            phi_i_min_half = (theta_i_min_half + abs(theta_i_min_half)) / (1 + abs(theta_i_min_half))
+        elif (Qi_min1-Qi_min2) > 0:
+            phi_i_min_half = 0
+        else:
+            phi_i_min_half = 2
 
-        phi_i_min_half = (theta_i_min_half + abs(theta_i_min_half))/(1 + abs(theta_i_min_half))
-        phi_i_plus_half = (theta_i_plus_half + abs(theta_i_plus_half))/(1 + abs(theta_i_plus_half))
+        if (Qi_plus1-Qi) != 0:
+            theta_i_plus_half = (Qi-Qi_min1)/(Qi_plus1-Qi)
+            phi_i_plus_half = (theta_i_plus_half + abs(theta_i_plus_half)) / (1 + abs(theta_i_plus_half))
+        elif (Qi-Qi_min1) > 0:
+            phi_i_plus_half = 0
+        else:
+            phi_i_plus_half = 2
 
         Q_plus = Qi - nu*(Qi - Qi_min1) - 0.5*nu*(1-nu)*(phi_i_plus_half*(Qi_plus1-Qi) - phi_i_min_half*(Qi-Qi_min1))
         return Q_plus
