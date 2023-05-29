@@ -2,7 +2,8 @@ import numpy as np
 import numericalScemes
 
 class ComposeDecompose:
-    def __init__(self, A, x0, x_grid, time_grid):
+    def __init__(self, A, x0, x_grid, time_grid, scheme="Fromm"):
+        self.scheme = scheme
         assert(len(A) == len(x0))
         self.spatial_axis = x_grid
         self.time_axis = time_grid
@@ -13,6 +14,7 @@ class ComposeDecompose:
         self.w = ComposeDecompose.Decompose(self)
         self.schemes = ComposeDecompose.SetupSchemes(self)
         print("schemes: ", self.schemes)
+        self.possible_schemes = ["Upwind", "Fromm", "VanLeer"]
 
 
     def Diagonalize(self):
@@ -57,8 +59,13 @@ class ComposeDecompose:
 
     def March(self):
         for n, scheme in enumerate(self.schemes):
-            scheme.TickVanLeer()
-            # scheme.PlotX()
+            assert self.scheme in self.possible_schemes
+            if self.scheme == "VanLeer":
+                scheme.TickVanLeer()
+            elif self.scheme == "Fromm":
+                scheme.TickFromm()
+            elif self.scheme == "Upwind":
+                scheme.TickUpwind()
             self.w[n] = scheme.state
         self.x = self.Compose()
 
