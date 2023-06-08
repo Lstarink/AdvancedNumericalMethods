@@ -11,6 +11,14 @@ class NumericalScheme:
         self.mesh = np.meshgrid(spatial_axis, time_axis)
         self.scheme = scheme
 
+    def Tick(self):
+        if self.scheme == "VanLeer":
+            self.TickVanLeer()
+        elif self.scheme == "Fromm":
+            self.TickFromm()
+        elif self.scheme == "Upwind":
+            self.TickUpwind()
+
     def TickUpwind(self):
         state_plus = np.zeros(self.state.shape)
         for n, state_n in enumerate(self.state):
