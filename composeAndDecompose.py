@@ -15,10 +15,15 @@ class ComposeDecompose:
         self.schemes = ComposeDecompose.SetupSchemes(self)
         print("schemes: ", self.schemes)
         self.possible_schemes = ["Upwind", "Fromm", "VanLeer"]
+        print("R", self.R)
+        print("R_inv ", self.R_inv)
+        print("Phi ", self.Phi)
+        print("eigenvalues", self.speeds)
 
 
     def Diagonalize(self):
         eigenvalues, eigenvectors= np.linalg.eig(self.A)
+        # eigenvalues = np.flip(eigenvalues)
         is_real = np.isreal(eigenvalues)
         print(is_real)
         for real_eigenvalue in is_real:
